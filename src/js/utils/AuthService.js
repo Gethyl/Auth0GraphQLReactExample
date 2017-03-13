@@ -49,15 +49,21 @@ export default class AuthService extends EventEmitter {
   loggedIn() {
     // Checks if there is a saved token and it's still valid
     const token = this.getToken()
-    const decodedToken = decode(token)
-    console.log(decodedToken.exp * 1000)
-    console.log(new Date().getTime())
-    if ((decodedToken.exp * 1000) < (new Date().getTime())){
-      alert("Your session has expired....logging out!!")
-      this.logout()
+    if (!token) {
       return false
     }
-    else return true
+    else {
+      const decodedToken = decode(token)
+      console.log(decodedToken.exp * 1000)
+      console.log(new Date().getTime())
+      if ((decodedToken.exp * 1000) < (new Date().getTime())){
+        alert("Your session has expired....logging out!!")
+        this.logout()
+        return false
+      }
+      else return true
+    }
+    
   }
 
   setToken(idToken) {

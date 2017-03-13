@@ -1,5 +1,6 @@
 import React, { PropTypes as T } from 'react'
 import { hashHistory } from 'react-router'
+import {connect} from 'react-redux'
 
 import styles from '../../cs/style.css'
 
@@ -10,19 +11,25 @@ import ActionExitToApp from "material-ui/svg-icons/action/exit-to-app"
 import Help from "material-ui/svg-icons/action/help"
 import {grey50,deepOrange300,purple500} from "material-ui/styles/colors"
 
+import {setProfileInStore,clearProfile} from "../actions/action"
+
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
 
+const mapStateToProps = (state = {}) => {
+	// console.dir(state)
+    return {...state};
+};
 export class Container extends React.Component {
   constructor(props){
     super(props)
+    const {dispatch,route} = this.props
 
-    this.state = {
-      profile: props.route.auth.getProfile()
-    }
+    dispatch(setProfileInStore(route.auth.getProfile()))
+
     // listen to profile_updated events to update internal state
     props.route.auth.on('profile_updated', (newProfile) => {
-      this.setState({profile: newProfile})
+       dispatch(setProfileInStore(newProfile))
     })
   }
 
@@ -34,18 +41,13 @@ export class Container extends React.Component {
       })
     }
     const { auth } = this.props.route
+    const {pathname} = this.props.location
+    const {profile,dispatch} = this.props
 
-    /*const logoutIcon = <ActionExitToApp 
-                            style={{cursor:"pointer"}}
-                            color={grey50}
-                            hoverColor={deepOrange300}
-                            onTouchTap={auth.logout.bind(this)}
-                       >
-                       </ActionExitToApp>*/
 
     let userLoggedIn = null
     const authProfile = auth.getProfile()
-    if (authProfile.hasOwnProperty('name')){
+    if (profile && profile.hasOwnProperty('name') && pathname !== "/login"){
         userLoggedIn = <span>
                         <Avatar
                             color={deepOrange300}
@@ -53,11 +55,11 @@ export class Container extends React.Component {
                             size={30}
                             
                          >    
-                         {/*src={this.state.profile.picture}*/}
-                        {this.state.profile.name.substring(0,1)}
+                         {/*src={profile.picture}*/}
+                        {profile.name.substring(0,1)}
                         </Avatar>
                         {" "}
-                        <span>Welcome <strong>{this.state.profile.name}</strong></span>
+                        <span>Welcome <strong>{profile.name}</strong></span>
                         
                         <div style={{textAlign:"end"}}>
                             <Help
@@ -78,7 +80,6 @@ export class Container extends React.Component {
     }
     else {
        userLoggedIn = null
-    //    this.setState({profile: null})
     }
        
 
@@ -95,4 +96,4 @@ export class Container extends React.Component {
   }
 }
 
-export default Container;
+export default  connect(mapStateToProps)(Container)

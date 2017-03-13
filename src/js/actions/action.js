@@ -6,6 +6,15 @@ export const initialData = (res) => ({
 	loading:false
 })
 
+export const setProfileInStore = (res) => ({
+	type: "SET_PROFILE",
+	profile: res
+})
+
+export const clearProfile = () => ({
+	type: "CLEAR_PROFILE",
+	profile: {}
+})
 /***************************************************************************************** */
 /* 																						   */
 /***************************************************************************************** */

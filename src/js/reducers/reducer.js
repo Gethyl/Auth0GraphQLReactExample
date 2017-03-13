@@ -10,6 +10,16 @@ const reducer = (state=initialState, action) => {
         loading:action.loading,
         news: action.news
       }
+    case 'SET_PROFILE':
+	  return {
+        ...state,
+        profile:action.profile
+      }
+    case 'CLEAR_PROFILE':
+	  return {
+        ...state,
+        profile:action.profile
+      }  
     default:
       return state
   }
