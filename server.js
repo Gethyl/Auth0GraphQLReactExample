@@ -16,14 +16,6 @@ import schema from './graphql/Schema'
 
 const app = express();
 
-// app.use(cookieParser());
-// app.use(session({
-//   secret: 'shhhhhhh',
-//   saveUninitialized: true,
-//   resave: true,
-// //   store: new MongoStore({ mongooseConnection: db })
-// }))
-
 const secureAuthenticate = jwt({
   secret: AUTH_SECRET,
   audience: AUTH_CLIENT_ID
@@ -33,26 +25,8 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}))
 
-// middleware to use for all requests
-// app.use((req, res, next) => {
-// 	// Website you wish to allow to connect
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-
-//     // Request methods you wish to allow
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-//     // Request headers you wish to allow
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization')
-
-//     // Set to true if you need the website to include cookies in the requests sent
-//     // to the API (e.g. in case you use sessions)
-//     res.setHeader('Access-Control-Allow-Credentials', true);
-//     console.log('+++Gethyl entering the middleware');
-//     next(); // make sure we go to the next routes and don't stop here
-// })
-
 app.get('/api/nonsecure/newsfeed',  (req, res) => {
-    fetch(`http://newsapi.org/v1/articles?source=google-news&sortBy=top&apiKey=`+apiKey)
+    fetch(`http://newsapi.org/v1/articles?source=bbc-news&sortBy=top&apiKey=`+apiKey)
                  .then(res => res.json())
                  .then(json => {
                   //  console.log(json)
@@ -64,7 +38,7 @@ app.get('/api/nonsecure/newsfeed',  (req, res) => {
 })
 
 app.get('/api/secure/newsfeed', secureAuthenticate, (req, res) => {
-    fetch(`http://newsapi.org/v1/articles?source=google-news&sortBy=top&apiKey=`+apiKey)
+    fetch(`http://newsapi.org/v1/articles?source=cnn&sortBy=top&apiKey=`+apiKey)
                  .then(res => res.json())
                  .then(json => {
                   //  console.log(json)
@@ -80,4 +54,4 @@ app.use('/graphql', graphqlHTTP (req => ({
 	,graphiql:true
 })))
 
-app.listen(3000,()=> {console.log("+++Express Server is Running!!!")})
+app.listen(3000,()=> {console.log("+++Express Server is Running on port 3000!!!")})

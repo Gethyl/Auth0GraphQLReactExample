@@ -1,4 +1,6 @@
 import React, { PropTypes as T } from 'react'
+import { hashHistory } from 'react-router'
+
 import AuthService from '../utils/AuthService'
 import styles from '../../cs/style.css'
 import RaisedButton from "material-ui/RaisedButton"
@@ -68,10 +70,13 @@ export class Home extends React.Component {
           <span>
               <RaisedButton label="Fetch News Secure" primary={true} onTouchTap={this.fetchSecure.bind(this)} />
               {" "}
-              <RaisedButton label="Fetch News Not Secure" secondary={true} onTouchTap={this.fetchNonSecure.bind(this)} />
-              { childNewsFeed   }
-              
+              <RaisedButton label="Fetch News Not Secure" secondary={true} onTouchTap={this.fetchNonSecure.bind(this)} />              
           </span>
+          {" "}
+          <RaisedButton label="GraphQL Non Secure" primary={true} onTouchTap={()=> {hashHistory.push('/using-graphql')}} />
+          {/*{this.props.children}*/}
+          { childNewsFeed   }
+          
       </div>
     )
   }
