@@ -27,9 +27,9 @@ export const makeMainRoutes = () => {
   return (
     <Route path="/" component={Container} auth={auth} >
       <IndexRedirect to="/home" />
-      <Route path="home" component={Home} onEnter={requireAuth} >
-      </Route>
-      <Route path="using-graphql" component={UsingGraphQL} onEnter={requireAuth} /> 
+      <Route path="home" component={Home} onEnter={requireAuth} />
+      <Route path="using-graphql" component={UsingGraphQL} onEnter={requireAuth} queryType={"graphql"} />
+      <Route path="using-graphql-secure" component={UsingGraphQL} onEnter={requireAuth} queryType={"graphql-secure"} /> 
       <Route path="help" component={Help} onEnter={requireAuth} />
       <Route path="login" component={Login} />
       

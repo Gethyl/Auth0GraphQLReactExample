@@ -42,7 +42,8 @@ export class Container extends React.Component {
     }
     const { auth } = this.props.route
     const {pathname} = this.props.location
-    const {profile,dispatch} = this.props
+    const {profile} = this.props.newsReducer
+    const {dispatch} = this.props
 
 
     let userLoggedIn = null

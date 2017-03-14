@@ -54,4 +54,9 @@ app.use('/graphql', graphqlHTTP (req => ({
 	,graphiql:true
 })))
 
+app.use('/graphql-secure',secureAuthenticate, graphqlHTTP (req => ({
+	schema
+	,graphiql:true
+})))
+
 app.listen(3000,()=> {console.log("+++Express Server is Running on port 3000!!!")})

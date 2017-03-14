@@ -68,17 +68,23 @@ export  class UsingGraphQL extends React.Component{
    constructor(props)
    {
 	   super(props)
-	   const {dispatch} = this.props
+	   const {dispatch,route} = this.props
 	   this.state = {feedReady:false}
 
-	   fetch(`http://localhost:3000/graphql?query=query{news{status,source,articles{title,description,urlToImage}}}`)
-			.then(res => res.json())
-			.then(json => {
-				console.log(json)
-				this.setState({newsFeed:json, feedReady: true})
+	   fetch(`http://localhost:3000/`+route.queryType+`?query=query{news{status,source,articles{title,description,urlToImage}}}`)
+			.then(res => {
+				if (res.status !== 401)  {
+					return res.json()
+				}
+				else return {status:res.status, statusText:res.statusText}
 			})
-			.catch(err => 
-				console.log(err))
+			.then(json => {
+				// console.log(json)
+				json.status !== 401 ? this.setState({newsFeed:json, feedReady: true}) : alert(json.statusText)
+			})
+			.catch(err => { 
+				console.log("Catch Block"+err)
+			})
    }
 
    render(){	

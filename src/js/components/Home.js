@@ -43,13 +43,19 @@ export class Home extends React.Component {
     }
 
     fetch(`http://localhost:3000/api/secure/newsfeed`,{headers})
-                 .then(res => res.json())
-                 .then(json => {
-                   console.log(json)
-                   this.setState({newsFeed:json, feedReady: true})
-                  })
-                 .catch(err => 
-                    console.log(err))
+         .then(res => {
+            if (res.status !== 401)  {
+              return res.json()
+            }
+            else return {status:res.status, statusText:res.statusText}
+          })
+          .then(json => {
+            // console.log(json)
+            json.status !== 401 ? this.setState({newsFeed:json, feedReady: true}) : alert(json.statusText)
+          })
+          .catch(err => { 
+            console.log("Catch Block"+err)
+          })
  }
 
   render() {
@@ -70,10 +76,12 @@ export class Home extends React.Component {
           <span>
               <RaisedButton label="Fetch News Secure" primary={true} onTouchTap={this.fetchSecure.bind(this)} />
               {" "}
-              <RaisedButton label="Fetch News Not Secure" secondary={true} onTouchTap={this.fetchNonSecure.bind(this)} />              
+              <RaisedButton label="Fetch News Not Secure" primary={true} onTouchTap={this.fetchNonSecure.bind(this)} />              
           </span>
           {" "}
-          <RaisedButton label="GraphQL Non Secure" primary={true} onTouchTap={()=> {hashHistory.push('/using-graphql')}} />
+          <RaisedButton label="GraphQL Secure" secondary={true} onTouchTap={()=> {hashHistory.push('/using-graphql-secure')}} />  
+          {" "}
+          <RaisedButton label="GraphQL Non Secure" secondary={true} onTouchTap={()=> {hashHistory.push('/using-graphql')}} />  
           {/*{this.props.children}*/}
           { childNewsFeed   }
           
