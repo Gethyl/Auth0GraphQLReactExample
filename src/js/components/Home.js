@@ -80,8 +80,8 @@ export class Home extends React.Component {
           </span>
           {" "}
           <RaisedButton label="GraphQL Secure" secondary={true} onTouchTap={()=> {hashHistory.push('/using-graphql-secure')}} />  
-          {" "}
-          <RaisedButton label="GraphQL Non Secure" secondary={true} onTouchTap={()=> {hashHistory.push('/using-graphql')}} />  
+          {/*{" "}
+          <RaisedButton label="GraphQL Non Secure" secondary={true} onTouchTap={()=> {hashHistory.push('/using-graphql')}} />  */}
           {/*{this.props.children}*/}
           { childNewsFeed   }
           

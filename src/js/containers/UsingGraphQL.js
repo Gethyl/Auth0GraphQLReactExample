@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import {connect} from 'react-redux'
 
 import NewsFeed from "../components/NewsFeed"
+import Notification from "../components/Notification"
 
 import CircularProgress from 'material-ui/CircularProgress'
 import Divider from 'material-ui/Divider'
@@ -22,7 +23,7 @@ import {
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
-import {loadInitialData} from  '../actions/action'
+import {notifyUser} from  '../actions/action'
 
 import { graphql } from 'react-apollo'
 import gql from "graphql-tag"
@@ -58,7 +59,17 @@ let progressStyle = {
 /******************************************************************************************************************
  *  GraphQL 
  ******************************************************************************************************************/
-const MyQuery = gql`query {news {status,source,articles{title,description,urlToImage}}}`
+const MyQuery = gql`query NewsFeed{
+							news {
+									status
+									source
+									articles {
+									title
+									description
+									urlToImage
+									}
+								}
+							}`
 
 /******************************************************************************************************************
  *  UsingGraphQL 
@@ -69,39 +80,43 @@ export  class UsingGraphQL extends React.Component{
    {
 	   super(props)
 	   const {dispatch,route} = this.props
-	   this.state = {feedReady:false}
-
-	   fetch(`http://localhost:3000/`+route.queryType+`?query=query{news{status,source,articles{title,description,urlToImage}}}`)
-			.then(res => {
-				if (res.status !== 401)  {
-					return res.json()
-				}
-				else return {status:res.status, statusText:res.statusText}
-			})
-			.then(json => {
-				// console.log(json)
-				json.status !== 401 ? this.setState({newsFeed:json, feedReady: true}) : alert(json.statusText)
-			})
-			.catch(err => { 
-				console.log("Catch Block"+err)
-			})
    }
 
    render(){	
+	    let snackbar = null
 	    let childNewsFeed = null
-		if (this.state.feedReady){
-			const {articles} = this.state.newsFeed.data.news
+		const {dispatch} = this.props
+		const {loading} = this.props.data
+		if (!loading){
+			if (!this.props.data.error) {
+				const {articles} = this.props.data.news
 
-			childNewsFeed = <NewsFeed news={articles}  />
+				childNewsFeed = <NewsFeed news={articles}  />
+			}
+			else {
+				if (this.props.data.error.networkError.response.status === 401){
+					// dispatch(notifyUser("No access or Token expired :("))
+					//alert("No access or Token expired :(")
+        			snackbar = <Notification message={"No access or Token expired :("} openSnackbar={true}/>
+				}
+				else{
+					// dispatch(notifyUser("Fetching data failed"))
+					// alert("Fetching data failed....")
+        			snackbar = <Notification message={"Fetching data failed...."} openSnackbar={true}/>
+
+				}
+			}
+			
 		}   
 		return (
 			<div >
 				<h4>Inside UsingGraphQL</h4>
 				{childNewsFeed}
+				{snackbar}
 			</div>
 		)
 	}
 }
 
-// const UsingGraphQLWithData = graphql(MyQuery)(UsingGraphQL)
-export default  connect(mapStateToProps)(UsingGraphQL)
+const UsingGraphQLWithData = graphql(MyQuery)(UsingGraphQL)
+export default  connect(mapStateToProps)(UsingGraphQLWithData)

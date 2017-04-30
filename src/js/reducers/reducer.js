@@ -20,6 +20,11 @@ const reducer = (state=initialState, action) => {
         ...state,
         profile:action.profile
       }  
+    case 'NOTIFY_USER':
+	  return {
+        ...state,
+        notifyMessage:action.notifyMessage
+      }  
     default:
       return state
   }

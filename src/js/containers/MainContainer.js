@@ -11,6 +11,7 @@ import ActionExitToApp from "material-ui/svg-icons/action/exit-to-app"
 import Help from "material-ui/svg-icons/action/help"
 import {grey50,deepOrange300,purple500} from "material-ui/styles/colors"
 
+import Notification from "../components/Notification"
 import {setProfileInStore,clearProfile} from "../actions/action"
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -42,7 +43,7 @@ export class Container extends React.Component {
     }
     const { auth } = this.props.route
     const {pathname} = this.props.location
-    const {profile} = this.props.newsReducer
+    const {profile,notifyMessage} = this.props.newsReducer
     const {dispatch} = this.props
 
 
@@ -82,7 +83,10 @@ export class Container extends React.Component {
     else {
        userLoggedIn = null
     }
-       
+    let snackbar = null
+    if (notifyMessage){
+        snackbar = <Notification message={notifyMessage} openSnackbar={true}/>
+    }   
 
     return (
         <div>
@@ -92,6 +96,7 @@ export class Container extends React.Component {
                 iconElementRight={userLoggedIn}
             />
             {children}
+            {snackbar}
         </div>
     )
   }

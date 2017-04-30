@@ -19,7 +19,7 @@ const routes = makeMainRoutes()
 const app = document.getElementById('app')
 
 const networkInterface = createNetworkInterface({
-  uri: 'http://localhost:5000/graphql',
+  uri: 'http://localhost:3000/graphql-secure',
 });
 networkInterface.use([{
   applyMiddleware(req, next) {
@@ -27,11 +27,20 @@ networkInterface.use([{
       req.options.headers = {};  // Create the header object if needed.
     }
     // get the authentication token from local storage if it exists
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('id_token');
     req.options.headers.authorization = token ? `Bearer ${token}` : null;
     next();
   }
 }]);
+
+// networkInterface.useAfter([{
+//   applyAfterware({ response }, next) {
+//     if (response.status === 401) {
+// 			 alert("Authentication failed!!")
+//     }
+//     next();
+//   }
+// }]);
 
 const client = new ApolloClient({
   networkInterface,
