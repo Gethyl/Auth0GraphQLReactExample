@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "apollo-client": "^0.8.7",
+    "auth0-js": "^8.6.1",
     "auth0-lock": "^10.12.3",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
