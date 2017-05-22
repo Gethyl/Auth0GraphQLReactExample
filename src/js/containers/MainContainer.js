@@ -1,5 +1,7 @@
 import React, { PropTypes as T } from 'react'
-import { hashHistory } from 'react-router'
+import { browserHistory } from 'react-router'
+import { withRouter, Route, Switch, Link } from 'react-router-dom'
+
 import {connect} from 'react-redux'
 
 import styles from '../../cs/style.css'
@@ -17,6 +19,9 @@ import {setProfileInStore,clearProfile} from "../actions/action"
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
 
+import Home from '../components/Home'
+import UsingGraphQL from './UsingGraphQL'
+
 const mapStateToProps = (state = {}) => {
 	// console.dir(state)
     return {...state};
@@ -24,32 +29,35 @@ const mapStateToProps = (state = {}) => {
 export class Container extends React.Component {
   constructor(props){
     super(props)
-    const {dispatch,route} = this.props
-
-    dispatch(setProfileInStore(route.auth.getProfile()))
-
     // listen to profile_updated events to update internal state
-    props.route.auth.on('profile_updated', (newProfile) => {
-       dispatch(setProfileInStore(newProfile))
+    this.props.auth.on('profile_updated', (newProfile) => {
+        dispatch(setProfileInStore(newProfile))
     })
+  }
+
+  componentDidMount(){
+
+  }
+
+  componentWillMount(){
+    const {dispatch,auth} = this.props
+    dispatch(setProfileInStore(auth.getProfile()))
   }
 
   render() {
     let children = null;
-    if (this.props.children) {
-      children = React.cloneElement(this.props.children, {
-        auth: this.props.route.auth //sends auth instance from route to children
-      })
-    }
-    const { auth } = this.props.route
+    // if (!!this.props.children) {
+    //   children = React.cloneElement(this.props.children, {
+    //     auth: this.props.route.auth //sends auth instance from route to children
+    //   })
+    // }
+    const { auth } = this.props
     const {pathname} = this.props.location
     const {profile,notifyMessage} = this.props.newsReducer
-    const {dispatch} = this.props
-
 
     let userLoggedIn = null
     const authProfile = auth.getProfile()
-    if (profile && profile.hasOwnProperty('name') && pathname !== "/login"){
+    if (profile && profile.hasOwnProperty('name')){ // && pathname !== "/login"){
         userLoggedIn = <span>
                         <Avatar
                             color={deepOrange300}
@@ -68,7 +76,10 @@ export class Container extends React.Component {
                                 style={{cursor:"pointer"}}
                                 color={grey50}
                                 hoverColor={deepOrange300}
-                                onTouchTap={()=> {hashHistory.push('/help')}}
+                                onTouchTap={()=> {
+                                        this.props.history.push('/help')
+                                    }
+                                }
                             />
                             {" "}
                             <ActionExitToApp 
@@ -95,11 +106,15 @@ export class Container extends React.Component {
                 showMenuIconButton={false}
                 iconElementRight={userLoggedIn}
             />
-            {children}
+            <Home {...this.props}/>
+            
+            <Switch>
+                <Route path={`${this.props.match.url}/using-graphql-secure`} component={UsingGraphQL} />
+            </Switch>
             {snackbar}
         </div>
     )
   }
 }
 
-export default  connect(mapStateToProps)(Container)
+export default  withRouter(connect(mapStateToProps)(Container))

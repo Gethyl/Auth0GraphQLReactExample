@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Router, hashHistory} from "react-router"
+import {BrowserRouter as Router,  Route, Link, Redirect } from "react-router-dom"
 // import { createStore, applyMiddleware } from 'redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import {Provider} from 'react-redux'
@@ -14,7 +14,7 @@ import makeMainRoutes from "./route"
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-const routes = makeMainRoutes()
+//const routes = makeMainRoutes()
 // const store = createStore(reducer, applyMiddleware(thunk))
 const app = document.getElementById('app')
 
@@ -33,14 +33,42 @@ networkInterface.use([{
   }
 }]);
 
-// networkInterface.useAfter([{
-//   applyAfterware({ response }, next) {
-//     if (response.status === 401) {
-// 			 alert("Authentication failed!!")
-//     }
-//     next();
-//   }
-// }]);
+import AuthService from './utils/AuthService'
+import Container from './containers/MainContainer'
+import UsingGraphQL from './containers/UsingGraphQL'
+import Home from './components/Home'
+import Login from './components/Login'
+import Help from './components/Help'
+import {AUTH_CLIENT_ID,AUTH_DOMAIN} from "../../auth.config"
+
+const auth = new AuthService(AUTH_CLIENT_ID,AUTH_DOMAIN)
+
+// validate authentication for private routes
+const requireAuth = (nextState, replace) => {
+  if (!auth.loggedIn()) {
+    replace({ pathname: '/login' })
+  }
+}
+
+const handleAuthentication = (nextState, replace) => {
+  if (/access_token|id_token|error/.test(nextState.location.hash)) {
+    auth.handleAuthentication(nextState.location.hash);
+  }
+}
+
+const PrivateRoute = ({ component: Component,auth, ...rest }) => (
+  <Route {...rest} render={props => {
+    return (!!auth.loggedIn() ? (
+      <Component {...props} auth={auth}/>
+    ) : (
+      <Redirect to={{
+        pathname: '/login',
+        state: { from: props.location }
+      }}/>
+    ))
+  }
+  }/>
+)
 
 const client = new ApolloClient({
   networkInterface,
@@ -48,17 +76,34 @@ const client = new ApolloClient({
 
 const store = createStore(
 	 combineReducers({
+		 apollo: client.reducer(),
 		 newsReducer:reducer,
-		 apollo: client.reducer()
 		}),
 	 {newsReducer:{loading:true}},
 	 applyMiddleware(client.middleware())
 )
 
 ReactDOM.render(
-		<ApolloProvider store={store} client={client}>
-			<MuiThemeProvider>
-				<Router history={hashHistory} routes={routes}/>				
-			</MuiThemeProvider>
-		</ApolloProvider>
+	<ApolloProvider store={store} client={client}>
+		<MuiThemeProvider>
+			<Router >
+				<div>
+					{/*<Link to="/public">Public Page</Link>*/}
+					<Link to="/protected">Protected Page</Link>
+          <Route path="/" render={(props) => {
+              {/*alert('Gethyl- test1'); */}
+              handleAuthentication(props)
+              return <Redirect to="/protected" />}}
+          />
+					
+					<Route path="/home" component={Home} />
+          <Route path="/help" component={Help} />
+					<Route path="/login" render={() => <Login auth={auth}/>} />
+          {/*<Route path="using-graphql-secure" component={UsingGraphQL}/> */}
+					<PrivateRoute path="/protected" component={Container} auth={auth} />
+          <Route path="/access_token=:token" render={() => {alert('Gethyl'); return <Redirect to="/help"/>}} />
+				</div>
+			</Router>
+		</MuiThemeProvider>
+	</ApolloProvider>
 			, app)

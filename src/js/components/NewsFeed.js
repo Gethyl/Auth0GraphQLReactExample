@@ -10,47 +10,47 @@ import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'mat
 
 let cardStyle = {
    //  maxWidth:"100%",
-     minHeight:100
+     height:400
 }
 
 let cardHeaderStyle = {
    //  maxWidth:"100%",
-     maxHeight:10
+     height:'30%',
+     paddingRight:'0%'
 }
 
 let col6 = {
     width: "40%",
     float: "left",
     padding: "15px",
-    maxHeight:300,
+    maxHeight:500,
 }
 
 export default class NewsFeed extends React.Component{
    constructor(props)
    {
 	   super(props)
-	   const {dispatch,news} = this.props
-       console.log(news)
    }
 
    componentWillUnmount() {
 
    }
-// display:"inline",float:"none",textAlign: "initial",
    render(){	
-       const {dispatch,news} = this.props
+       const {news} = this.props
 		return (
-            <div style={{ marginLeft:"15%",}}>
+            <div style={{ margin:"10% 15% 0% 0%"}}>
                 &nbsp;
                 {news.map((newsItem,index)=>{
                     return <div key={index} style={col6}>
-										<Card  style={cardStyle}  >
-											<CardHeader titleStyle={cardHeaderStyle} title={newsItem.title} />
-											<CardMedia >
-													<img height={250} src={newsItem.urlToImage} />
-											</CardMedia>
-										</Card>
-									</div>
+                        <Card style={cardStyle}  >
+                            <CardHeader titleStyle={cardHeaderStyle}
+                                title={newsItem.title}
+                                textStyle={{ paddingRight: '0%' }} />
+                            <CardMedia >
+                                <img style={{ height: '250px' }} src={newsItem.urlToImage} />
+                            </CardMedia>
+                        </Card>
+                    </div>
                		}
 					 )}
 			</div>

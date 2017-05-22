@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom"
 import {connect} from 'react-redux'
+import { hashHistory } from 'react-router'
 
 import NewsFeed from "../components/NewsFeed"
 import Notification from "../components/Notification"
@@ -25,13 +26,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import {notifyUser} from  '../actions/action'
 
-import { graphql } from 'react-apollo'
+import { graphql, compose, withApollo } from 'react-apollo'
 import gql from "graphql-tag"
-
-import axios from "axios"
-// import {List} from "immutable"
-
-// import loginImage from "../../images/Login.jpg"
 
 const mapStateToProps = (state = {}) => {
     // console.dir(state)
@@ -70,7 +66,13 @@ const MyQuery = gql`query NewsFeed{
 									}
 								}
 							}`
-
+const myQueryConfig = {
+	options: (props) => {
+		return {
+			fetchPolicy:"cache-first",
+		}
+	},
+};
 /******************************************************************************************************************
  *  UsingGraphQL 
  ******************************************************************************************************************/
@@ -79,13 +81,17 @@ export  class UsingGraphQL extends React.Component{
    constructor(props)
    {
 	   super(props)
-	   const {dispatch,route} = this.props
+	   this.routeToGraphSecure = this.routeToGraphSecure.bind(this)
+   }
+
+   routeToGraphSecure(){
+	   this.props.history.push('/protected') 
    }
 
    render(){	
+	   	console.log('Entered UsingGraphQL')
 	    let snackbar = null
 	    let childNewsFeed = null
-		const {dispatch} = this.props
 		const {loading} = this.props.data
 		if (!loading){
 			if (!this.props.data.error) {
@@ -95,13 +101,9 @@ export  class UsingGraphQL extends React.Component{
 			}
 			else {
 				if (this.props.data.error.networkError.response.status === 401){
-					// dispatch(notifyUser("No access or Token expired :("))
-					//alert("No access or Token expired :(")
         			snackbar = <Notification message={"No access or Token expired :("} openSnackbar={true}/>
 				}
 				else{
-					// dispatch(notifyUser("Fetching data failed"))
-					// alert("Fetching data failed....")
         			snackbar = <Notification message={"Fetching data failed...."} openSnackbar={true}/>
 
 				}
@@ -111,6 +113,8 @@ export  class UsingGraphQL extends React.Component{
 		return (
 			<div >
 				<h4>Inside UsingGraphQL</h4>
+				<FlatButton label="Return" secondary={true} onTouchTap={ this.routeToGraphSecure} />  
+
 				{childNewsFeed}
 				{snackbar}
 			</div>
@@ -118,5 +122,7 @@ export  class UsingGraphQL extends React.Component{
 	}
 }
 
-const UsingGraphQLWithData = graphql(MyQuery)(UsingGraphQL)
+const UsingGraphQLWithData = compose(
+	graphql(MyQuery,myQueryConfig)
+)(withApollo(UsingGraphQL))
 export default  connect(mapStateToProps)(UsingGraphQLWithData)

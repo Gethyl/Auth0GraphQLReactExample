@@ -3,10 +3,12 @@ import AuthService from '../utils/AuthService'
 import styles from '../../cs/style.css'
 
 import RaisedButton from "material-ui/RaisedButton"
+import {Redirect } from "react-router-dom"
+
 
 export class Login extends React.Component {
   static propTypes = {
-    location: T.object,
+
     auth: T.instanceOf(AuthService)
   }
 

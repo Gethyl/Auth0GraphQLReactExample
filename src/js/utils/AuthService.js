@@ -2,6 +2,8 @@ import { EventEmitter } from 'events'
 import Auth0Lock from 'auth0-lock'
 import decode from "jwt-decode"
 import { hashHistory } from 'react-router'
+import { browserHistory as history } from 'react-router'
+
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
@@ -13,22 +15,45 @@ export default class AuthService extends EventEmitter {
       },
       auth: {
         autoParseHash: true,
-        redirectUrl: 'http://localhost:8080/#/login',
+        redirect:true,
+        redirectUrl: 'http://localhost:8080/',
         responseType: 'token'
       }
     })
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this))
 
+    // this.lock.resumeAuth(hash, function (error, authResult) {
+    //   if (error) {
+    //     alert("Could not parse hash");
+    //   }
+    //   console.log(authResult.accessToken);
+    // });
+
     // binds login functions to keep this context
     this.login = this.login.bind(this)
+  }
+
+ 
+
+  handleAuthentication(hash) {
+    console.log(hash) 
+    // this.lock.parseHash((err, authResult) => {
+      // if (authResult && authResult.accessToken && authResult.idToken) {
+      //   this.setSession(authResult);
+      //   history.replace('/protected');
+      // } else if (err) {
+      //   history.replace('/protected');
+      //   console.log(err);
+      // }
+    // });
   }
 
   _doAuthentication(authResult) {
     // Saves the user token
     this.setToken(authResult.idToken)
     // navigate to the home route
-    hashHistory.replace('/home')
+    // hashHistory.replace('/home')
 
     // Async loads the user profile data
     this.lock.getProfile(authResult.idToken, (error, profile) => {
@@ -39,6 +64,7 @@ export default class AuthService extends EventEmitter {
         this.setProfile(profile)
       }
     })
+    history.replace('/protected')
   }
 
   login() {
@@ -99,6 +125,7 @@ export default class AuthService extends EventEmitter {
     // Clear user token and profile data from local storage
     localStorage.removeItem('id_token')
     localStorage.removeItem('profile')
-    hashHistory.replace('/login')
+    this.props.history.push('/login')
+    // hashHistory.replace('/login')
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Route, IndexRedirect} from 'react-router'
+import {Route, IndexRedirect} from 'react-router-dom'
 import AuthService from './utils/AuthService'
 import Container from './containers/MainContainer'
 import UsingGraphQL from './containers/UsingGraphQL'
@@ -29,7 +29,8 @@ export const makeMainRoutes = () => {
       <IndexRedirect to="/home" />
       <Route path="home" component={Home} onEnter={requireAuth} />
       {/*<Route path="using-graphql" component={UsingGraphQL} onEnter={requireAuth} queryType={"graphql"} />*/}
-      <Route path="using-graphql-secure" component={UsingGraphQL} onEnter={requireAuth} queryType={"graphql-secure"} /> 
+      {/*<Route path="using-graphql-secure" component={UsingGraphQL} onEnter={requireAuth} queryType={"graphql-secure"} /> */}
+      <Route path="using-graphql-secure" component={UsingGraphQL} onEnter={requireAuth}  /> 
       <Route path="help" component={Help} onEnter={requireAuth} />
       <Route path="login" component={Login} />
       

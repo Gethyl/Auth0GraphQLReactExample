@@ -68,7 +68,7 @@ export  class NewsContainer extends React.Component{
    constructor(props)
    {
 	   super(props)
-	   const {dispatch,newsReducer} = this.props
+	   const {newsReducer} = this.props
 	   this.loginModal = this.loginModal.bind(this)
 	   //dispatch(loadInitialData())
 	   this.state = {
@@ -105,7 +105,7 @@ export  class NewsContainer extends React.Component{
    }
 
    render(){	
-       const {dispatch,newsReducer,data} = this.props
+       const {newsReducer,data} = this.props
 	   const {loading}  = data
   	   var isUserLoggedIn = false
 	   var userName = "Gethyl"	 

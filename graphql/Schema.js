@@ -65,21 +65,8 @@ var schema = new GraphQLSchema({
     fields: {
       news: {
           type: news,
-          resolve: (root,args) => {
+          resolve: (root,args,context) => {
             return fetchNews()
-            // console.log(root)
-            // console.log(args)
-            // return {
-            //           status:"ok",
-            //           source:"ok",
-            //           articles:[
-            //             {
-            //               title:"Getz Test",
-            //               description:"Getz description",
-            //               urlToImage:"test url"
-            //             }
-            //           ]
-            //         }
           }
         }
     }
