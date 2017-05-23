@@ -1,7 +1,7 @@
 import React, { PropTypes as T } from 'react'
 import { hashHistory } from 'react-router'
 import {blue500} from "material-ui/styles/colors"
-import AuthService from '../utils/AuthService'
+import Auth from '../utils/Auth'
 import styles from '../../cs/style.css'
 import RaisedButton from "material-ui/RaisedButton"
 import NewsFeed from "./NewsFeed"
@@ -34,7 +34,7 @@ export class Home extends React.Component {
 
   fetchNonSecure() {
     this.setState({ feedReady: false })
-    fetch(`http://localhost:3000/api/nonsecure/newsfeed`)
+    fetch(`http://localhost:3001/api/nonsecure/newsfeed`)
       .then(res => res.json())
       .then(json => {
         //  console.log(json)
@@ -51,13 +51,13 @@ export class Home extends React.Component {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }
-    const idToken = this.props.auth.getToken()
+    const idToken = localStorage.getItem('id_token')
     // if logged in, includes the authorization header
     if (!!idToken) {
       headers['Authorization'] = 'Bearer ' + idToken
     }
 
-    fetch(`http://localhost:3000/api/secure/newsfeed`, { headers })
+    fetch(`http://localhost:3001/api/secure/newsfeed`, { headers })
       .then(res => {
         if (res.status !== 401) {
           return res.json()

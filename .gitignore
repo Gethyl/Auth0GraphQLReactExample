@@ -3,3 +3,6 @@ dist
 yarn-*
 auth.config.js
 newsapi.config.js
+
+#ignore pem files
+*.pem

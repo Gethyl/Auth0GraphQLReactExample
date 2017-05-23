@@ -38,7 +38,7 @@ export const loadInitialData = () => {
                cache: 'default' 
 			};
 
-		axios.get("http://localhost:3000/graphql?query={news{status,source,articles{title,description,urlToImage}}}")
+		axios.get("http://localhost:3001/graphql?query={news{status,source,articles{title,description,urlToImage}}}")
 		//    .then(res=>
 		//    		res.json()
 		//    )

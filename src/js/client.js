@@ -19,7 +19,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 const app = document.getElementById('app')
 
 const networkInterface = createNetworkInterface({
-  uri: 'http://localhost:3000/graphql-secure',
+  uri: 'http://localhost:3001/graphql-secure',
 });
 networkInterface.use([{
   applyMiddleware(req, next) {
@@ -39,10 +39,20 @@ import UsingGraphQL from './containers/UsingGraphQL'
 import Home from './components/Home'
 import Login from './components/Login'
 import Help from './components/Help'
-import {AUTH_CLIENT_ID,AUTH_DOMAIN} from "../../auth.config"
+import Auth from './utils/Auth'
 
-const auth = new AuthService(AUTH_CLIENT_ID,AUTH_DOMAIN)
+// import {AUTH_CLIENT_ID,AUTH_DOMAIN} from "../../auth.config"
+// import auth0 from 'auth0-js'
 
+// auth0 = new auth0.WebAuth({
+//   domain:AUTH_DOMAIN,
+//   clientID:AUTH_CLIENT_ID,
+//   redirectUrl: 'http://localhost:8080/',
+//   responseType: 'token id_token'
+// })
+
+// const auth = new AuthService(AUTH_CLIENT_ID,AUTH_DOMAIN)
+const auth = new Auth()
 // validate authentication for private routes
 const requireAuth = (nextState, replace) => {
   if (!auth.loggedIn()) {
@@ -101,7 +111,7 @@ ReactDOM.render(
 					<Route path="/login" render={() => <Login auth={auth}/>} />
           {/*<Route path="using-graphql-secure" component={UsingGraphQL}/> */}
 					<PrivateRoute path="/protected" component={Container} auth={auth} />
-          <Route path="/access_token=:token" render={() => {alert('Gethyl'); return <Redirect to="/help"/>}} />
+          {/*<Route path="/access_token=:token" render={() => {alert('Gethyl'); return <Redirect to="/help"/>}} />*/}
 				</div>
 			</Router>
 		</MuiThemeProvider>

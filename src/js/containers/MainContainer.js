@@ -24,14 +24,18 @@ import UsingGraphQL from './UsingGraphQL'
 
 const mapStateToProps = (state = {}) => {
 	// console.dir(state)
-    return {...state};
+    const {profile} = state.newsReducer
+    return {profile};
 };
+
 export class Container extends React.Component {
   constructor(props){
     super(props)
+    this.getAuthProfileDetails = this.getAuthProfileDetails.bind(this)
     // listen to profile_updated events to update internal state
     this.props.auth.on('profile_updated', (newProfile) => {
-        dispatch(setProfileInStore(newProfile))
+        if (!!newProfile)
+            this.props.dispatch(setProfileInStore(newProfile))
     })
   }
 
@@ -39,9 +43,26 @@ export class Container extends React.Component {
 
   }
 
+  componentDidUpdate(prevProps, prevState) {
+      const { dispatch, auth, profile } = this.props
+    //   const authProfile = this.getAuthProfileDetails()
+    //   dispatch(setProfileInStore(this.getAuthProfileDetails()))
+      if (!profile ) {
+          auth.getProfile()
+      }
+  }
+
+  getAuthProfileDetails() {
+      const { dispatch, auth } = this.props
+      const profileInfo =  auth.getProfile()
+      
+      return profileInfo
+
+  }
+
   componentWillMount(){
     const {dispatch,auth} = this.props
-    dispatch(setProfileInStore(auth.getProfile()))
+    dispatch(setProfileInStore(JSON.parse(localStorage.getItem('profile'))))
   }
 
   render() {
@@ -53,10 +74,10 @@ export class Container extends React.Component {
     // }
     const { auth } = this.props
     const {pathname} = this.props.location
-    const {profile,notifyMessage} = this.props.newsReducer
+    const {profile} = this.props
 
     let userLoggedIn = null
-    const authProfile = auth.getProfile()
+    // const authProfile = auth.getProfile() 
     if (profile && profile.hasOwnProperty('name')){ // && pathname !== "/login"){
         userLoggedIn = <span>
                         <Avatar
@@ -94,10 +115,10 @@ export class Container extends React.Component {
     else {
        userLoggedIn = null
     }
-    let snackbar = null
-    if (notifyMessage){
-        snackbar = <Notification message={notifyMessage} openSnackbar={true}/>
-    }   
+    // let snackbar = null
+    // if (notifyMessage){
+    //     snackbar = <Notification message={notifyMessage} openSnackbar={true}/>
+    // }   
 
     return (
         <div>
@@ -111,7 +132,7 @@ export class Container extends React.Component {
             <Switch>
                 <Route path={`${this.props.match.url}/using-graphql-secure`} component={UsingGraphQL} />
             </Switch>
-            {snackbar}
+            {/*{snackbar}*/}
         </div>
     )
   }

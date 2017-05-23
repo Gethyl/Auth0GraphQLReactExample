@@ -93,7 +93,7 @@ export  class NewsContainer extends React.Component{
    newUseLogIn = ()=>{
 	   const userName = ReactDOM.findDOMNode(this.refs.newUserRef.input).value
 	   if (!!userName){
-		 axios.post('http://localhost:3000/storesession'
+		 axios.post('http://localhost:3001/storesession'
 		 			,{username:userName}
 				   ).then((res)=>{
 						  this.setState({openLogin:false,username:userName,errorText:""})

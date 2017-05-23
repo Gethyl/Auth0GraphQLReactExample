@@ -1,5 +1,5 @@
 import React, { PropTypes as T } from 'react'
-import AuthService from '../utils/AuthService'
+import Auth from '../utils/Auth'
 import styles from '../../cs/style.css'
 
 import RaisedButton from "material-ui/RaisedButton"
@@ -7,10 +7,10 @@ import {Redirect } from "react-router-dom"
 
 
 export class Login extends React.Component {
-  static propTypes = {
+  // static propTypes = {
 
-    auth: T.instanceOf(AuthService)
-  }
+  //   auth: T.instanceOf(Auth)
+  // }
 
   render() {
     const { auth } = this.props

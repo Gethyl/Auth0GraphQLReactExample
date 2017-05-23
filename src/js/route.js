@@ -1,6 +1,6 @@
 import React from 'react'
 import {Route, IndexRedirect} from 'react-router-dom'
-import AuthService from './utils/AuthService'
+import Auth from './utils/Auth'
 import Container from './containers/MainContainer'
 import UsingGraphQL from './containers/UsingGraphQL'
 import Home from './components/Home'
@@ -8,7 +8,7 @@ import Login from './components/Login'
 import Help from './components/Help'
 import {AUTH_CLIENT_ID,AUTH_DOMAIN} from "../../auth.config"
 
-const auth = new AuthService(AUTH_CLIENT_ID,AUTH_DOMAIN)
+const auth = new Auth(AUTH_CLIENT_ID,AUTH_DOMAIN)
 
 // validate authentication for private routes
 const requireAuth = (nextState, replace) => {

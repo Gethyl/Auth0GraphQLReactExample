@@ -5,7 +5,7 @@ var path = require('path');
 module.exports = {
   context: __dirname, //path.join(__dirname, "src"),
   devtool:  "inline-sourcemap",
-  entry: ["./src/js/client.js"],  
+  entry: ["babel-polyfill", "./src/js/client.js"],  
   module: {
     loaders: [
       {
@@ -35,4 +35,9 @@ module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
   ],
+  devServer: {
+    historyApiFallback: true,
+    contentBase: './',
+    hot: true
+  },
 };

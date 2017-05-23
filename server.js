@@ -3,7 +3,8 @@ import bodyParser from 'body-parser';
 import cors from "cors"
 // import session from "express-session"
 // import cookieParser from "cookie-parser"
-import jwt from "express-jwt"
+// import jwt from "express-jwt"
+import jwt from 'jsonwebtoken'
 
 import fetch from "node-fetch"
 import apiKey from "./newsapi.config"
@@ -13,13 +14,25 @@ import {graphql} from 'graphql'
 import graphqlHTTP from 'express-graphql';
 import { graphqlExpress } from 'graphql-server-express'
 import schema from './graphql/Schema'
+import fs from 'file-system'
 
 const app = express();
 
-const secureAuthenticate = jwt({
-  secret: AUTH_SECRET,
-  audience: AUTH_CLIENT_ID
-})
+const secureAuthenticate = (req,res, next) => {
+  const authToken = req.get('Authorization').split(" ")[1]
+  // console.dir(authToken)
+  var cert = fs.readFileSync('gethyl.pem');
+  jwt.verify(authToken,
+            cert,{
+                  alg:['RS256'],
+                  audience: AUTH_CLIENT_ID
+                }, 
+                (err,payload)=>{
+                  if (!!err) res.json(err)
+                  // if (!!payload) next()
+                  else next();
+                })
+}
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -59,4 +72,4 @@ app.use('/graphql-secure',secureAuthenticate, graphqlHTTP (req => ({
 	,graphiql:true
 })))
 
-app.listen(3000,()=> {console.log("+++Express Server is Running on port 3000!!!")})
+app.listen(3001,()=> {console.log("+++Express Server is Running on port 3001!!!")})
