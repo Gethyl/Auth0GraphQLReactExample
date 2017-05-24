@@ -40,6 +40,10 @@ import Home from './components/Home'
 import Login from './components/Login'
 import Help from './components/Help'
 import Auth from './utils/Auth'
+import CircularProgress from 'material-ui/CircularProgress';
+import history from './history'
+
+
 
 // import {AUTH_CLIENT_ID,AUTH_DOMAIN} from "../../auth.config"
 // import auth0 from 'auth0-js'
@@ -63,12 +67,13 @@ const requireAuth = (nextState, replace) => {
 const handleAuthentication = (nextState, replace) => {
   if (/access_token|id_token|error/.test(nextState.location.hash)) {
     auth.handleAuthentication(nextState.location.hash);
+    <Redirect to="/protected" />
   }
 }
 
 const PrivateRoute = ({ component: Component,auth, ...rest }) => (
   <Route {...rest} render={props => {
-    return (!!auth.loggedIn() ? (
+    return (!!auth.isAuthenticated() ? (
       <Component {...props} auth={auth}/>
     ) : (
       <Redirect to={{
@@ -96,16 +101,21 @@ const store = createStore(
 ReactDOM.render(
 	<ApolloProvider store={store} client={client}>
 		<MuiThemeProvider>
-			<Router >
+			<Router history={history} >
 				<div>
-					{/*<Link to="/public">Public Page</Link>*/}
-					<Link to="/protected">Protected Page</Link>
+					{/*<Link to="/protected">Protected Page</Link>*/}
           <Route path="/" render={(props) => {
-              {/*alert('Gethyl- test1'); */}
-              handleAuthentication(props)
               return <Redirect to="/protected" />}}
           />
-					
+					<Route path="/callback" render={(props) => {
+              {/*alert('Gethyl- test1'); */}
+              handleAuthentication(props)
+              return <Redirect to="/loading" />}}
+              
+          />
+          <Route path="/loading" render={(props) => {
+              return <CircularProgress size={80} thickness={5} />}}
+          />
 					<Route path="/home" component={Home} />
           <Route path="/help" component={Help} />
 					<Route path="/login" render={() => <Login auth={auth}/>} />

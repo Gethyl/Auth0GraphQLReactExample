@@ -4,7 +4,7 @@
   "description": "Using Auth0 in React + NodeJs",
   "main": "server.js",
   "scripts": {
-    "start": "webpack-dev-server --content-base --inline --hot",
+    "start": "webpack-dev-server  --inline --hot",
     "server": "babel-node  server.js"
   },
   "author": "Gethyl George",

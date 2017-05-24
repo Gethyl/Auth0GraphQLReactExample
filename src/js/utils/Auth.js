@@ -8,7 +8,7 @@ export default class Auth extends EventEmitter {
     auth0 = new auth0.WebAuth({
         domain: AUTH_DOMAIN,
         clientID: AUTH_CLIENT_ID,
-        redirectUrl: 'http://localhost:8080/protected',
+        redirectUrl: 'http://localhost:8080/help',
         responseType: 'token id_token',
         scope: 'openid profile'
     })
@@ -32,7 +32,7 @@ export default class Auth extends EventEmitter {
         this.auth0.parseHash((err, authResult) => {
             if (authResult && authResult.accessToken && authResult.idToken) {
                 this.setSession(authResult);
-                history.replace('/');
+                history.replace('/protected');
             } else if (err) {
                 // history.replace('/home');
                 console.log(err);
